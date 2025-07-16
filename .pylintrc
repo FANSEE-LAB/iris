@@ -1,0 +1,8 @@
+[MESSAGES CONTROL]
+disable=
+    E1101,  # Disable "no-member" for dynamic attributes like OpenCV
+    W0611,  # Disable "unused-import"
+    C0301   # Disable "line-too-long"
+
+[FORMAT]
+max-line-length=120

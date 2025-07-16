@@ -1,0 +1,83 @@
+# AR Target Detection System Configuration Example
+# Copy this file to config.yaml and modify for your setup
+
+# System Settings
+system:
+  name: "Iris Exhibition Device"
+  version: "1.0.0"
+  log_level: "INFO" # DEBUG, INFO, WARNING, ERROR
+
+# Camera Settings
+camera:
+  enabled: true
+  width: 1280
+  height: 960
+  fps: 8
+  flip_method: 0
+  exposure_compensation: 0
+  awb_mode: "auto"
+
+# Detection Engine Settings
+detection:
+  engine: "orb" # orb, sift, surf
+  max_features: 50 # Lower for Pi, higher for desktop
+  confidence_threshold: 0.8
+  min_matches: 10
+  stability_frames: 1
+
+  # ORB specific settings (only used when engine is 'orb')
+  orb:
+    edge_threshold: 10
+    first_level: 0
+    wta_k: 2
+    score_type: "FAST_SCORE" # FAST_SCORE or HARRIS_SCORE
+    patch_size: 25
+    fast_threshold: 5
+
+# Target Images Configuration
+targets:
+  directory: "images"
+  format: "png"
+  targets:
+    - id: 0
+      name: "target_1"
+      file: "target_1.png"
+      description: "First target"
+    - id: 1
+      name: "target_2"
+      file: "target_2.png"
+      description: "Second target"
+    - id: 2
+      name: "target_3"
+      file: "target_3.png"
+      description: "Third target"
+
+# MQTT Settings
+mqtt:
+  enabled: true
+  broker: "localhost" # Change to your MQTT broker IP
+  port: 1883
+  client_id: "ar_detector"
+  username: "" # Leave empty if no auth required
+  password: "" # Leave empty if no auth required
+  topics:
+    detection: "ar/detection"
+    status: "ar/status"
+    heartbeat: "ar/heartbeat"
+  qos: 1
+  retain: false
+
+# Performance Settings
+performance:
+  max_detection_time: 2.0 # seconds - detection timeout
+  heartbeat_interval: 30 # seconds - status broadcast interval
+  debug_mode: false
+  save_debug_images: false
+  debug_image_path: "debug_images"
+
+# Exhibition Mode Settings
+exhibition:
+  auto_start: true # Start detection automatically
+  simulation_mode: false # Set to true for testing without camera
+  detection_cooldown: 1.0 # seconds between detections
+  status_display: true
