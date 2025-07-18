@@ -328,8 +328,33 @@ class IrisDetector:
         self.logger.info("System shutdown completed")
 
 
+def run_detection(config_path: str = "config.yaml"):
+    """Run real-time detection with camera"""
+    detector = IrisDetector(config_path)
+    detector.start()
+
+
+def run_simulation(config_path: str = "config.yaml"):
+    """Run detection in simulation mode"""
+    import tempfile
+
+    with open(config_path, "r") as f:
+        config = yaml.safe_load(f)
+    config["exhibition"]["simulation_mode"] = True
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+        yaml.dump(config, f)
+        temp_config = f.name
+
+    try:
+        detector = IrisDetector(temp_config)
+        detector.start()
+    finally:
+        os.unlink(temp_config)
+
+
 def main():
-    """Main entry point"""
+    """Main entry point for backward compatibility"""
     import argparse
 
     parser = argparse.ArgumentParser(description="AR Target Detection System")
@@ -339,24 +364,10 @@ def main():
     args = parser.parse_args()
 
     try:
-        # Override simulation mode if specified
         if args.simulation:
-            import tempfile
-
-            with open(args.config, "r") as f:
-                config = yaml.safe_load(f)
-            config["exhibition"]["simulation_mode"] = True
-
-            with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
-                yaml.dump(config, f)
-                temp_config = f.name
-
-            detector = IrisDetector(temp_config)
-            os.unlink(temp_config)
+            run_simulation(args.config)
         else:
-            detector = IrisDetector(args.config)
-
-        detector.start()
+            run_detection(args.config)
 
     except Exception as e:
         logging.error(f"System failed: {e}")
